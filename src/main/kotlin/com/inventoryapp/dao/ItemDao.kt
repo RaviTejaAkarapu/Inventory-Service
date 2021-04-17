@@ -13,7 +13,7 @@ class ItemDao {
     @Throws(ApplicationRuntimeException::class)
     fun showItem(connection: Connection, itemToGet: String?): Item? {
         return try {
-            val showQuery = "select * from Items where sku_id = ?"
+            val showQuery = "select * from item where sku_id = ?"
             val showStatement = connection.prepareStatement(showQuery)
             showStatement.setString(1, itemToGet)
             resultSet = showStatement.executeQuery()
@@ -34,7 +34,7 @@ class ItemDao {
     @Throws(ApplicationRuntimeException::class)
     fun insertItemToDB(connection: Connection, item: Item) {
         try {
-            val insertionQuery = "insert into Items(sku_id,item_name,manufacturer_name,quantity) values(?,?,?,?)"
+            val insertionQuery = "insert into item (sku_id,item_name,manufacturer_name,quantity) values(?,?,?,?)"
             val insertItemStatement = connection.prepareStatement(insertionQuery)
             insertItemStatement.apply {
                 setString(1, item.skuId)
@@ -50,7 +50,7 @@ class ItemDao {
     @Throws(ApplicationRuntimeException::class)
     fun getItemList(connection: Connection): List<Item> {
         return try {
-            val fetchStatement = connection.prepareStatement("select * from item;t")
+            val fetchStatement = connection.prepareStatement("select * from item;")
             resultSet = fetchStatement.executeQuery()
             val itemsList: MutableList<Item> = ArrayList<Item>()
             while (resultSet.next()) {
