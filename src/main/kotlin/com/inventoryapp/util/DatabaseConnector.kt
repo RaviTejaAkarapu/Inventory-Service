@@ -17,8 +17,7 @@ class DatabaseConnector {
     fun getConnection(): Connection {
         try {
             Class.forName("org.postgresql.Driver")
-            connection = DriverManager.getConnection("postgres://wsguyqwl:ABLm7y-uATp1YR1e4hcIhlkmreyJq2AE@queenie.db.elephantsql.com:5432/wsguyqwl",
-                "wsguyqwl", "ABLm7y-uATp1YR1e4hcIhlkmreyJq2AE ")
+            connection = DriverManager.getConnection("postgres://wsguyqwl:ABLm7y-uATp1YR1e4hcIhlkmreyJq2AE@queenie.db.elephantsql.com:5432/wsguyqwl")
         } catch (e: SQLException) {
             throw ApplicationRuntimeException(500, "Can't connect, SQLException!", e.cause)
         }
