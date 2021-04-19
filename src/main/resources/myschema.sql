@@ -1,12 +1,12 @@
 create schema inventorydb;
 
-create index item_index on Item(sku_id);
 create table Item (
 	sku_id varchar(6) primary key,
 	item_name varchar(20),
 	manufacturer varchar(20),
 	quantity int
 );
+create index item_index on Item(sku_id);
 
 insert into item (sku_id,item_name,manufacturer,quantity)
 values('ABC001','Coke-600ml', 'Coca-cola Co.', '5');
