@@ -17,10 +17,20 @@ class DatabaseConnector {
     fun getConnection(): Connection {
         try {
             Class.forName("org.postgresql.Driver")
-            connection = DriverManager.getConnection("postgres://wsguyqwl:ABLm7y-uATp1YR1e4hcIhlkmreyJq2AE@queenie.db.elephantsql.com:5432/wsguyqwl")
+        } catch(e : ClassNotFoundException) {
+            throw ApplicationRuntimeException(500, "Class not found exception!", e.cause)
+        }
+
+        try {
+            val url = "jdbc:postgresql://queenie.db.elephantsql.com:5432/wsguyqwl"
+            val username = "wsguyqwl"
+            val password = "ABLm7y-uATp1YR1e4hcIhlkmreyJq2AE"
+
+            connection = DriverManager.getConnection(url, username, password)
         } catch (e: SQLException) {
             throw ApplicationRuntimeException(500, "Can't connect, SQLException!", e.cause)
         }
+
         connection?.let {
             logger.info("Successfully connected to Postgres Server!")
         } ?: run {
