@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.*
 class ItemController {
 
     private val itemService = ItemService()
-    var connector: DatabaseConnector = DatabaseConnector()
 
     @PostMapping("/getItem")
     fun getItem(@RequestBody getItemRequest: GetItemRequest): ResponseEntity<*>? {
         return try {
             val itemToGet = GetItemRequest(getItemRequest.skuId)
-            val item: Item = itemService.getItem(connector.getConnection(), itemToGet.skuId)
+            val item: Item = itemService.getItem(itemToGet.skuId)
             ResponseEntity<Any?>(item, HttpStatus.OK)
         } catch (e: InvalidInputException) {
             val error = ErrorResponse(e.errorCode, e.errorMessage)
@@ -36,7 +35,7 @@ class ItemController {
     @PostMapping("/addItem")
     fun addItem(@RequestBody item: Item): ResponseEntity<*>? {
         return try {
-            itemService.insert(connector.getConnection(), item)
+            itemService.insert(item)
             ResponseEntity.ok("Inserted the new item successfully.")
         } catch (e: InvalidInputException) {
             val error = ErrorResponse(e.errorCode, e.errorMessage)
@@ -50,7 +49,7 @@ class ItemController {
     @GetMapping("/getItems")
     fun getItems(): ResponseEntity<*>? {
         return try {
-            val listOfItems: List<Item> = itemService.itemList(connector.getConnection())
+            val listOfItems: List<Item> = itemService.itemList()
             ResponseEntity<Any?>(listOfItems, HttpStatus.OK)
         } catch (e: ApplicationRuntimeException) {
             val error = ErrorResponse(e.errorCode, e.errorMessage)

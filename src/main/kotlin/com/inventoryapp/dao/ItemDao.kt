@@ -2,6 +2,7 @@ package com.inventoryapp.dao
 
 import com.inventoryapp.entity.Item
 import com.inventoryapp.exceptions.ApplicationRuntimeException
+import com.inventoryapp.util.DatabaseConnector
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -9,9 +10,11 @@ import java.util.*
 
 class ItemDao {
     private lateinit var resultSet: ResultSet
+    var connector: DatabaseConnector = DatabaseConnector()
+    var connection = connector.getConnection()
 
     @Throws(ApplicationRuntimeException::class)
-    fun showItem(connection: Connection, itemToGet: String?): Item? {
+    fun showItem(itemToGet: String?): Item? {
         return try {
             val showQuery = "select * from item where sku_id = ?"
             val showStatement = connection.prepareStatement(showQuery)
@@ -32,7 +35,7 @@ class ItemDao {
     }
 
     @Throws(ApplicationRuntimeException::class)
-    fun insertItemToDB(connection: Connection, item: Item) {
+    fun insertItemToDB(item: Item) {
         try {
             val insertionQuery = "insert into item (sku_id,item_name,manufacturer_name,quantity) values(?,?,?,?)"
             val insertItemStatement = connection.prepareStatement(insertionQuery)
@@ -48,7 +51,7 @@ class ItemDao {
     }
 
     @Throws(ApplicationRuntimeException::class)
-    fun getItemList(connection: Connection): List<Item> {
+    fun getItemList(): List<Item> {
         return try {
             val fetchStatement = connection.prepareStatement("select * from item;")
             resultSet = fetchStatement.executeQuery()
