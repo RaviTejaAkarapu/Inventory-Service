@@ -9,15 +9,12 @@ import java.sql.SQLException
 import java.util.*
 
 class ItemDao {
-    private lateinit var resultSet: ResultSet
-    var connector: DatabaseConnector = DatabaseConnector()
-    var connection = connector.getConnection()
-
     @Throws(ApplicationRuntimeException::class)
     fun showItem(itemToGet: String?): Item? {
+        lateinit var resultSet: ResultSet
         return try {
             val showQuery = "select * from item where sku_id = ?"
-            val showStatement = connection.prepareStatement(showQuery)
+            val showStatement = DatabaseConnector().getConnection().prepareStatement(showQuery)
             showStatement.setString(1, itemToGet)
             resultSet = showStatement.executeQuery()
             var currentItem: Item? = Item()
@@ -38,7 +35,7 @@ class ItemDao {
     fun insertItemToDB(item: Item) {
         try {
             val insertionQuery = "insert into item (sku_id,item_name,manufacturer_name,quantity) values(?,?,?,?)"
-            val insertItemStatement = connection.prepareStatement(insertionQuery)
+            val insertItemStatement = DatabaseConnector().getConnection().prepareStatement(insertionQuery)
             insertItemStatement.apply {
                 setString(1, item.skuId)
                 setString(2, item.itemName)
@@ -52,9 +49,11 @@ class ItemDao {
 
     @Throws(ApplicationRuntimeException::class)
     fun getItemList(): List<Item> {
+        lateinit var connection: Connection
+        lateinit var resultSet: ResultSet
         return try {
-            val fetchStatement = connection.prepareStatement("select * from item;")
-            resultSet = fetchStatement.executeQuery()
+            connection = DatabaseConnector().getConnection()
+            resultSet = connection.prepareStatement("select * from item;").executeQuery()
             val itemsList: MutableList<Item> = ArrayList<Item>()
             while (resultSet.next()) {
                 val skuId = resultSet.getString(1)
@@ -67,6 +66,9 @@ class ItemDao {
             itemsList
         } catch (e: SQLException) {
             throw ApplicationRuntimeException(500, "Items in order couldn't be reached.", e.cause)
+        } finally {
+            resultSet.close()
+            connection.close()
         }
     }
 }
